@@ -1,0 +1,66 @@
+# Hamiltonian Cycle using Backtracking
+
+class HamiltonianGraph:
+    def __init__(self, graph):
+        self.graph = graph
+        self.V = len(graph)
+
+    def is_safe(self, v, pos, path):
+        # Check if vertex is adjacent to previous vertex
+        if self.graph[path[pos - 1]][v] == 0:
+            return False
+
+        # Check if vertex is already in path
+        if v in path:
+            return False
+
+        return True
+
+    def ham_cycle_util(self, path, pos):
+        # Base case: all vertices are included
+        if pos == self.V:
+            # Check if last vertex connects to first
+            return self.graph[path[pos - 1]][path[0]] == 1
+
+        # Try different vertices
+        for v in range(1, self.V):
+            if self.is_safe(v, pos, path):
+                path[pos] = v
+
+                if self.ham_cycle_util(path, pos + 1):
+                    return True
+
+                # Backtrack
+                path[pos] = -1
+
+        return False
+
+    def ham_cycle(self):
+        path = [-1] * self.V
+        path[0] = 0  # Start from vertex 0
+
+        if not self.ham_cycle_util(path, 1):
+            print("No Hamiltonian Cycle exists")
+            return False
+
+        self.print_solution(path)
+        return True
+
+    def print_solution(self, path):
+        print("Hamiltonian Cycle Found:")
+        for vertex in path:
+            print(vertex, end=" -> ")
+        print(path[0])
+
+
+# Example Graph
+graph = [
+    [0, 1, 1, 0, 1],
+    [1, 0, 1, 1, 1],
+    [1, 1, 0, 1, 0],
+    [0, 1, 1, 0, 1],
+    [1, 1, 0, 1, 0]
+]
+
+h = HamiltonianGraph(graph)
+h.ham_cycle()
